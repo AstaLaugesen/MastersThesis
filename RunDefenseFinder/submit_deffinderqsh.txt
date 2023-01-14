@@ -1,0 +1,2 @@
+for i in /home/projects/cu_10108/people/xuanli/CDS_prodigal/1_663/*.fa.faa; 
+do qsub defensefinder.qsh -F "$i"; sleep 1s; done
