@@ -1,0 +1,7 @@
+cp defensesystems_template.tsv defsystems_abundance.txt;
+
+for i in /home/projects/cu_10108/data/Generated/defensefinder_results/*; 
+do 
+HERE="/home/projects/cu_10108/data/Generated/abundance_profiles" 
+NAME=$(echo $i | sed 's/$//;s|.*\/..........||')
+cut -f 2,4 $i/defense_finder_systems_CasInClasses.tsv | tail -n+2 | sed 's/_[^_]*$//' | python3 new_abundance.py ${HERE}/${NAME}.profile.txt.gz $i >> defsystems_abundance.txt; done
