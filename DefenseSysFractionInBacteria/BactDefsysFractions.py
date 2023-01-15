@@ -9,14 +9,12 @@ with open(sys.argv[1]) as file_in:
 	for line in file_in:
 		BactList.append(line.strip())
         
-#print("Bacteria: ", BactList)
 #get total length in dict
 total_length_dict = {}
 length_file = open(sys.argv[2])
 for line in length_file:
 	key, value = line.split()
 	total_length_dict[key] = int(value)
-#print("lengths: ", total_length_dict)
 
 #get total reads in dict
 total_reads_dict = {}
@@ -24,13 +22,12 @@ reads_file = open(sys.argv[3])
 for line in reads_file:
 	key, value = line.split()
 	total_reads_dict[key] = int(value)
-#print("reads: ", total_reads_dict)
 
 #Read the infile (defense finder files) once
 DefSys = []
 for line in sys.stdin:
 	DefSys.append(line.strip())
-#print(DefSys)
+
 
 defsys_reads_dict={}
 defsys_length_dict={}
@@ -39,17 +36,15 @@ for bacteria in BactList:
 	defsys_reads_dict[bacteria] = [0]
 	defsys_length_dict[bacteria] = [0]
 	for line in DefSys:
-		##                                                         CHANGE HERE !!!
-		if ((re.search('(\s)'+bacteria+'(\s)',line)) and (re.search(r'\sShosTA\s',line))):
-			#print("hi, here's the line:", line)
+		##                                                 CHANGE DEFENSE SYSTEM NAME HERE !!!
+		if ((re.search('(\s)'+bacteria+'(\s)',line)) and (re.search(r'\sRM\s',line))):
 			if defsys_reads_dict[bacteria]==[0]:
 				defsys_reads_dict[bacteria]= [int( re.search(r'\s(\d+)$', line).group(1) )]
 				defsys_length_dict[bacteria]= [int( re.search(r'\s(\d+)\s\d+$', line).group(1) )]
 			else:
 				defsys_reads_dict[bacteria].append( int( re.search(r'\s(\d+)$', line).group(1) ) )
 				defsys_length_dict[bacteria].append( int( re.search(r'\s(\d+)\s\d+$', line).group(1) ) )
-			#print("reads: ",defsys_reads_dict)
-			#print("length: ",defsys_length_dict)
+
 
 #find results
 result_dict={}
@@ -59,10 +54,6 @@ for bacteria in BactList:
 	else:
 		result_dict[bacteria]= ( mean(defsys_reads_dict[bacteria])/mean(defsys_length_dict[bacteria]) ) / ( total_reads_dict[bacteria]/total_length_dict[bacteria])
 
-#print("sample01", end="\t"), print(*result_dict.values(), sep='\t')
-#print(result_dict)
-#print("reads ",defsys_reads_dict["Bacteroides"], "length ", defsys_length_dict["Bacteroides"])
-#print("total reads ",total_reads_dict["Bacteroides"], "total length ", total_length_dict["Bacteroides"])
 
                                            
 #Setting name of sample
