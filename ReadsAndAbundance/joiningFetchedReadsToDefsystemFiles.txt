@@ -1,0 +1,8 @@
+for i in /home/projects/cu_10108/data/Generated/defensefinder_results/*;
+do
+NAME=$(echo $i |sed -r 's/.*18097D-02-([0-9]*).*/\1/g')
+FETCH="/home/projects/cu_10108/people/astlau/scripts/masters/clustersOver200k/results_fetchingreads"
+echo "working on ${NAME}"
+join  <(cat $i/defsys_contigIn200kCluster.txt | awk '$9 == "1"' | awk '{print $2, $4}' | sed 's/_[^_]*$//' |awk '{print $2, $1}'|
+sort -k1,1 ) <(cat ${FETCH}/${NAME}_fetchingreadsAndLength_agg.txt | sort -k1,1 ) > $i/defsys_contigIn200kClusterWithReadsTaxAndLength.txt;
+done
