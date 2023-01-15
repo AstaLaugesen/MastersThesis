@@ -21,7 +21,7 @@ CLUSTER="/home/projects/cu_10108/people/astlau/scripts/masters/clustersOver200k"
 # Run
 # Find number of reads
 samtools view ${HERE}/${NAME}.filteredsort.bam | cut -f3 | sort -k1,1 | uniq -c| awk '{print $2"\t"$1}' > ${CLUSTER}/results_fetchingreads/${NAME}.readsTEMP.txt
-# Join with defensefinder results
+# Join with names of clusters over 200kbp and their taxonomy and genus length
 grep "18097D-02-${NAME}" ${CLUSTER}/clusterstsvover200kwithTaxAndLengthButNoUnderscores.txt | sed 's/\t18097D-02-[0-9]*_/\t/' | awk '{print $2"\t"$1"\t"$6"\t"$5}'| sort -k1,1 |
 join - ${CLUSTER}/results_fetchingreads/${NAME}.readsTEMP.txt > ${CLUSTER}/results_fetchingreads/${NAME}_fetchingreadsAndLength.txt
 # and clean after:
