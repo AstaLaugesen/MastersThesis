@@ -1,0 +1,29 @@
+#!/bin/sh
+#PBS -W group_list=cu_10108 -A cu_10108
+### Number of nodes
+#PBS -l nodes=1:ppn=7:thinnode
+### Memory
+#PBS -l mem=8gb
+### Requesting time - format is <days>:<hours>:<minutes>:<seconds>
+#PBS -l walltime=0:01:00:00
+# Go to the directory from where the job was submitted (initial directory is $HOME)
+echo Working directory is $PBS_O_WORKDIR
+cd $PBS_O_WORKDIR
+### Fun starts here
+# Activate environment
+. "/home/projects/cu_10108/people/astlau/bin/anaconda3/etc/profile.d/conda.sh"
+conda activate /home/projects/cu_10108/people/russel/Software/miniconda3/envs/msamtools
+# Generate variables
+HERE="/home/projects/cu_10108/data/Generated/sortfilteredmaps"
+NAME=$(echo $1 | sed 's/.filteredsort.bam$//;s|.*\/||')
+CLUSTER="/home/projects/cu_10108/people/astlau/scripts/masters/clustersOver200k"
+
+# Run
+# Find number of reads
+samtools view ${HERE}/${NAME}.filteredsort.bam | cut -f3 | sort -k1,1 | uniq -c| awk '{print $2"\t"$1}' > ${CLUSTER}/results_fetchingreads/${NAME}.readsTEMP.txt
+# Join with defensefinder results
+grep "18097D-02-${NAME}" ${CLUSTER}/clusterstsvover200kwithTaxAndLengthButNoUnderscores.txt | sed 's/\t18097D-02-[0-9]*_/\t/' | awk '{print $2"\t"$1"\t"$6"\t"$5}'| sort -k1,1 |
+join - ${CLUSTER}/results_fetchingreads/${NAME}.readsTEMP.txt > ${CLUSTER}/results_fetchingreads/${NAME}_fetchingreadsAndLength.txt
+# and clean after:
+rm ${CLUSTER}/results_fetchingreads/${NAME}.readsTEMP.txt
+
