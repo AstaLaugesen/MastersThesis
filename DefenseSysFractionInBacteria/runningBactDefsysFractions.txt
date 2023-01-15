@@ -1,0 +1,12 @@
+#copy template and create file for your defense system to append to with the python script
+cp BactChildDefPercent_header.txt /home/projects/cu_10108/people/astlau/scripts/masters/clustersOver200k/bacteriaAndDefsysFractionTables/BactDefsysFraction_Abi2.txt;
+
+for i in /home/projects/cu_10108/data/Generated/defensefinder_results/*;
+do
+HERE="/home/projects/cu_10108/data/Generated/abundance_profiles"
+CLUST="/home/projects/cu_10108/people/astlau/scripts/masters/clustersOver200k/results_fetchingreads"
+RESULTS="/home/projects/cu_10108/people/astlau/scripts/masters/clustersOver200k/bacteriaAndDefsysFractionTables"
+NAME=$(echo $i | sed 's/$//;s|.*\/..........||')
+grep "Abi2" $i/defsys_contigIn200kClusterWithReadsTaxAndLength.txt | python3 BactDefsysFractions.py <(cut -f1 -d' ' agg_bacteria_lengthandreads_fromresults_fetchingreads.txt) <(
+cat ${CLUST}/${NAME}_fetchingreadsAndLength_agg.txt | awk '{a[$3]+=$4}END{for(i in a) print i,"\t" a[i]}') <(
+cat ${CLUST}/${NAME}_fetchingreadsAndLength_agg.txt | awk '{b[$3]+=$5}END{for(i in b) print i,"\t" b[i]}') $i >> ${RESULTS}/BactDefsysFraction_Abi2.txt; done
